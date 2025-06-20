@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mon App{% endblock %}</title>
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .main {
+            width: calc(100% - 200px);
+            margin-left: 200px;
+            height: 100vh;
+            z-index: 0;
+        }
+        :root{
+            height: 100%;
+            width: 100%;
+            
+        }
+        input{
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex bg-blue-950">
+        {% include 'sideBarMenu.html' %}
+        <main class="main px-4">
+            <header class="flex items-center justify-between py-4">
+                <h1 class="text-white text-2xl font-bold">Bienvenue dans la section Produits</h1>
+                <div class="flex flex-row items-center hover:cursor-pointer" >
+                 <img src="{% static 'images/download.png' %}" class="h-10 w-10 rounded-full"/>
+                 <p class='font-semibold text-white ml-2'>admin</p>
+                </div>
+            </header>
+
+
+       
+        {% block content %}
+       <div class="mt-8 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 shadow-lg mx-2">
+        <h2 class="text-xl font-bold text-white mb-4">Liste des produits</h2>
+        <table class="w-full text-left text-white border-separate border-spacing-y-2">
+        <thead class="text-gray-300">
+            <tr>
+            <th class="p-2">Nom</th>
+            <th class="p-2">Prix</th>
+            <th class="p-2">Date peremption</th>
+            <th class="p-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in page_obj %}
+            <tr class="rounded-full hover:bg-gray-500 hover:scale-[1.05] transition-all duration-300">
+            <td class="p-2">{{ produit.nom }}</td>
+            <td class="p-2">{{ produit.prix }} €</td>
+            <td class="p-2">{{ produit.date_peremption }}</td>
+            <td class="p-2">
+                <button onclick="openPopup('{{ produit.id }}', '{{ produit.nom }}', '{{ produit.prix }}', '{{ produit.date_peremption }}')" class="text-blue-500 hover:underline">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <form action="{% url 'supprimer_produit' produit.id %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:underline ml-2">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+            <td colspan="3" class="text-center p-4">Aucun produit disponible.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+        {% endblock %}
+        <!-- Pop-up modal -->
+        <div id="popup-form" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="backdrop-blur-md bg-white/10 text-black rounded-xl p-6 w-96 shadow-xl relative">
+            <h2 class="text-xl font-bold mb-4 text-white">Modifier le produit</h2>
+            
+            <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="block mb-1 font-medium text-white">Nom :</label>
+                <input type="text" name="nom" id="input-nom" class="w-full p-2 border-2 rounded-xl  text-white" required>
+            </div>
+            <div class="mb-3">
+                <label class="block mb-1 font-medium text-white">Prix (€) :</label>
+                <input type="number" name="prix" id="input-prix" class="w-full p-2 border-2 rounded-xl text-white" required step="0.001">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1 font-medium text-white">Date de péremption :</label>
+                <input type="date" name="date_peremption" id="input-date" class="w-full p-2 border-2 rounded-xl text-white" required>
+            </div>
+            <div class="flex justify-between space-x-2">
+                <button type="button" onclick="closePopup()" class="bg-gray-300 text-black px-4 py-2 rounded-xl hover:scale-[1.1] transition-all duration-300">Annuler</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:scale-[1.1] transition-all duration-300">Confirmer</button>
+            </div>
+            </form>
+
+        <!-- Bouton de fermeture -->
+            <button onclick="closePopup()" class="absolute top-2 right-3 text-white text-2xl">&times;</button>
+        </div>
+        </div>
+     
+
+    </main>
+    </div>
+    <script>
+        function openPopup(id, nom, prix, date) {
+             // convertir date par exemple  "June 20, 2025" en "2025-06-20"
+            const parsedDate = new Date(date);
+            const yyyy = parsedDate.getFullYear();
+            const mm = String(parsedDate.getMonth() + 1).padStart(2, '0'); // +1 car les mois commencent à 0
+            const dd = String(parsedDate.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById("popup-form").classList.remove("hidden");
+
+            document.getElementById("input-nom").value = nom;
+            document.getElementById("input-prix").value = prix;
+            document.getElementById("input-date").value = formattedDate ;
+            const form = document.querySelector("#popup-form form");
+            form.action = `/produits/modifier/${id}/`;
+        }
+
+        function closePopup() {
+            document.getElementById("popup-form").classList.add("hidden");
+        }
+    </script>
+    
+
+</body>
+</html>

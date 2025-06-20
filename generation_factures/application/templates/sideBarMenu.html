@@ -3,51 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Facturation{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..."
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  >
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
+        .parent:hover{
+            background-color: white;
+            transform: scale(1.05);
+            transition: all 0.3s;
+            cursor: pointer;
         }
-
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            background-color: #f4f4f4;
-            padding: 20px;
-            float: left;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        .parent:hover .child{
+            color:#113ccb;
+            transition: all 0.3s;
         }
-
-        .sidebar h3 {
-            margin-top: 0;
-        }
-
-        .sidebar a {
-            display: block;
-            margin: 10px 0;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .content {
-            margin-left: 220px;
-            padding: 20px;
-        }
-    </style>
+        </style>
+   
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Menu</h3>
-        <a href="{% url 'accueil' %}">Accueil</a>
-        <a href="{% url 'produits' %}">Produits</a>
-        <a href="{% url 'factures' %}">Factures</a>
+    <div class="w-[200px] h-screen  fixed  shadow-[0px_-4px_10px_rgba(255,255,255,0.3),_0px_4px_10px_rgba(255,255,255,0.3)]  ">
+    <div class="flex pl-3 pt-8 items-center">
+        <i class="fa-brands fa-atlassian text-white text-2xl"></i>
+        <p class="text-white text-3xl font-semibold ml-3">ALLTOO</p>
     </div>
 
-    <div class="content">
+    <ul class="mt-20">
+        <li class="mt-1  w-[182px] parent relative flex items-center py-1 h-11 rounded-r-2xl pl-3 hover:bg-white/10">
+            <a href="{% url 'accueil' %}" class="flex items-center w-full">
+                 <i class="fa-solid fa-file-invoice text-white text-2xl child"></i>
+                <span class="ml-3 text-white text-lg child">Accueil</span>
+            </a>
+        </li>
+        <li class="mt-6  w-[182px] parent relative flex items-center py-1 h-11 rounded-r-2xl pl-3 hover:bg-white/10">
+            <a href="{% url 'produits' %}" class="flex items-center w-full">
+                 <i class="fa-solid fa-boxes-stacked text-white text-2xl child"></i>
+                <span class="ml-3 text-white text-lg child">Produits</span>
+            </a>
+        </li>
+        <li class="mt-6  w-[182px] parent relative flex items-center py-1 h-11 rounded-r-2xl pl-3 hover:bg-white/10">
+            <a href="{% url 'factures' %}" class="flex items-center w-full">
+                 <i class="fa-solid fa-file-invoice-dollar text-white text-2xl child"></i>
+                <span class="ml-3 text-white text-lg child">Factures</span>
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+    <div class="content bg-black">
         {% block content %}
         {% endblock %}
     </div>
 </body>
 </html>
-{% load static %}
